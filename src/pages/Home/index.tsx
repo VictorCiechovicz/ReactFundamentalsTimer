@@ -12,14 +12,15 @@ import {
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as zod from 'zod'
+import { useState } from 'react'
 
-//interface NewCycleFormData {
+// interface NewCycleFormData {
 //  task: string
 //  minutesAmount: number
-//}
+// }
 
-//esta forma de tipagem abaixo é uma funcionalidade do zod que apartir do
-//schema de validação e ja da pronto a tipagem dos atributos
+// esta forma de tipagem abaixo é uma funcionalidade do zod que apartir do
+// schema de validação e ja da pronto a tipagem dos atributos
 
 type NewCycleFormData = zod.infer<typeof newCycleFormValidationSchema>
 
@@ -31,7 +32,16 @@ const newCycleFormValidationSchema = zod.object({
     .max(60, 'Valor máximo de duração é de 60 minutos')
 })
 
+interface Cycle {
+  id: string
+  task: string
+  minutesAmount: number
+}
+
 export function Home() {
+  const [cycle, setCycle] = useState<Cycle[]>([])
+  const [activeCycleId, setActiveCycleId] = useState<string | null>(null)
+
   const { register, handleSubmit, watch, formState, reset } =
     useForm<NewCycleFormData>({
       resolver: zodResolver(newCycleFormValidationSchema),
@@ -41,13 +51,25 @@ export function Home() {
       }
     })
 
-  function handleCreateNewCycle(data: any) {
-    console.log(data)
+  function handleCreateNewCycle(data: NewCycleFormData) {
+    const id = String(new Date().getTime())
+
+    const newCycle: Cycle = {
+      id,
+      task: data.task,
+      minutesAmount: data.minutesAmount
+    }
+
+    setCycle(state => [...state, newCycle])
+    setActiveCycleId(id)
     reset()
   }
 
-  //console.log(formState.errors)
-  //para verificar as mensagens de erro que foram colocadas no schema de validação
+  const activeCycle = cycle.find(cycle => cycle.id === activeCycleId)
+  console.log(activeCycle)
+
+  // console.log(formState.errors)
+  // para verificar as mensagens de erro que foram colocadas no schema de validação
 
   const isTaskDisabled = watch('task')
 
