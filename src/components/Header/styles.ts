@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 
-export const HeaderContainer = styled.div`
+export const HeaderContainer = styled.header`
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -26,7 +26,7 @@ export const HeaderContainer = styled.div`
         border-bottom: 3px solid ${(props) => props.theme['green-500']};
       }
 
-      &:active {
+      &.active {
         color: ${(props) => props.theme['green-500']};
       }
     }
